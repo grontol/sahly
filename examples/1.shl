@@ -1,0 +1,30 @@
+pasang Label {
+    text "Angka pertama"
+}
+
+pasang Input {
+    hint "Masukkan angka pertama"
+}
+
+pasang Label {
+    text "Angka kedua"
+}
+
+pasang Input {
+    hint "Masukkan angka kedua"
+}
+
+pasang Label {
+    text "Hasil"
+}
+
+pasang Input {
+    hint "Hasilnya nanti di sini"
+}
+
+pasang Tombol {
+    text "Hitung"
+    // aksi {
+    //    
+    //}
+}
