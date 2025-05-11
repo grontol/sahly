@@ -5,6 +5,7 @@ export enum AstKind {
     PlaceUi,
     Property,
     Bind,
+    Block,
     
     LitNumber,
     LitString,
@@ -29,7 +30,8 @@ export type AstProperty = {
     isBind: boolean
 }
 
-export type AstStmt = AstPlaceUi
+export type AstStmt
+= AstPlaceUi
 | AstProperty
 
 export type AstLitNumber = {
@@ -47,6 +49,13 @@ export type AstBind = {
     name: string
 }
 
-export type AstExpr = AstLitNumber
+export type AstBlock = {
+    kind: AstKind.Block
+    stmts: AstStmt[]
+}
+
+export type AstExpr
+= AstLitNumber
 | AstLitString
 | AstBind
+| AstBlock

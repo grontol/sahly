@@ -1,4 +1,4 @@
-import { AstBind, AstExpr, AstKind, AstLitNumber, AstLitString, AstPlaceUi, AstProperty, AstRoot, AstStmt } from "@/parser/ast";
+import { AstBind, AstBlock, AstExpr, AstKind, AstLitNumber, AstLitString, AstPlaceUi, AstProperty, AstRoot, AstStmt } from "@/parser/ast";
 import { TokenKind, Tokens } from "@/tokenizer/token";
 import { todo } from "@/utils";
 
@@ -6,22 +6,25 @@ export function parse(tokens: Tokens): AstRoot {
     const stmts: AstStmt[] = []
     
     while (tokens.hasNext()) {
-        const kind = tokens.peek().kind
-        
-        switch (kind) {
-            case TokenKind.KeywordPlaceUi: {
-                stmts.push(parsePasang(tokens))
-                break
-            }
-            default: {
-                todo(`parse : ${TokenKind[kind]}`)
-            }
-        }
+        stmts.push(parseStmt(tokens))
     }
     
     return {
         kind: AstKind.Root,
         stmts,
+    }
+}
+
+function parseStmt(tokens: Tokens): AstStmt {
+    const kind = tokens.peek().kind
+        
+    switch (kind) {
+        case TokenKind.KeywordPlaceUi: {
+            return parsePasang(tokens)
+        }
+        default: {
+            todo(`parseStmt : ${TokenKind[kind]}`)
+        }
     }
 }
 
@@ -72,9 +75,28 @@ function parseExpr(tokens: Tokens): AstExpr {
         case TokenKind.LitString: {
             return parseLitString(tokens)
         }
+        case TokenKind.OpenCurlyBracket: {
+            return parseBlock(tokens)
+        }
         default: {
             todo(`Parse expr : ${TokenKind[kind]}`)
         }
+    }
+}
+
+function parseBlock(tokens: Tokens): AstBlock {
+    tokens.nextExpect(TokenKind.OpenCurlyBracket)
+    
+    const stmts: AstStmt[] = []
+    while (tokens.peek().kind !== TokenKind.CloseCurlyBracket) {
+        stmts.push(parseStmt(tokens))
+    }
+    
+    tokens.nextExpect(TokenKind.CloseCurlyBracket)
+    
+    return {
+        kind: AstKind.Block,
+        stmts,
     }
 }
 

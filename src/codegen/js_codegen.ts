@@ -1,5 +1,6 @@
+import { uiElements } from "@/codegen/ui";
 import { AstExpr, AstKind, AstPlaceUi, AstProperty, AstRoot, AstStmt } from "@/parser/ast";
-import { showError, todo, unreachable } from "@/utils";
+import { showError, todo } from "@/utils";
 
 let varId = 0
 
@@ -29,117 +30,38 @@ function genStmt(stmt: AstStmt): string {
 }
 
 function genPlaceUi(placeUi: AstPlaceUi): string {
-    switch (placeUi.ui.value) {
-        case "Label": {
-            return genUiLabel(placeUi.properties)
-        }
-        case "Input": {
-            return genUiInput(placeUi.properties)
-        }
-        case "Tombol": {
-            return genUiButton(placeUi.properties)
-        }
-        default: {
-            showError(
-                `Tidak ada ui yang namanya '${placeUi.ui.value}'`,
-                placeUi.ui.file,
-                placeUi.ui.row,
-                placeUi.ui.col,
-            )
-        }
-    }
-}
-
-function genUiLabel(properties: AstProperty[]): string {
-    const v = createVar()
-    
-    const text = [`
-        const ${v} = document.createElement('div');
-        el.appendChild(${v})
-    `]
-    
-    for (const prop of properties) {
-        switch (prop.name.value) {
-            case "text": {
-                const value = genExpr(prop.value)
-                text.push(`${v}.innerHTML = ${value};`)
-                break
-            }
-            default: {
+    if (placeUi.ui.value in uiElements) {
+        const ui = uiElements[placeUi.ui.value]
+        
+        const varName = createVar()
+        const texts = [ui.create('el', varName)]
+        
+        for (const prop of placeUi.properties) {
+            const uiProp = ui.properties.find(x => x.name === prop.name.value)
+            
+            if (!uiProp) {
                 showError(
-                    `Property '${prop.name.value}' gak ada di Label`,
+                    `Property '${prop.name.value}' gak ada di ${ui.name}`,
                     prop.name.file,
                     prop.name.row,
                     prop.name.col,
                 )
             }
+            
+            const value = genExpr(prop.value)
+            texts.push(`${varName}.${uiProp.jsName} = ${value}`)
         }
+        
+        return texts.join('\n')
     }
-    
-    return text.join('\n')
-}
-
-function genUiInput(properties: AstProperty[]): string {
-    const v = createVar()
-    
-    const text = [`
-        const ${v} = document.createElement('input');
-        el.appendChild(${v})
-    `]
-    
-    for (const prop of properties) {
-        switch (prop.name.value) {
-            case "text": {
-                const value = genExpr(prop.value)
-                text.push(`${v}.value = ${value};`)
-                break
-            }
-            case "hint": {
-                const value = genExpr(prop.value)
-                text.push(`${v}.placeholder = ${value};`)
-                break
-            }
-            default: {
-                showError(
-                    `Property '${prop.name.value}' gak ada di Input`,
-                    prop.name.file,
-                    prop.name.row,
-                    prop.name.col,
-                )
-            }
-        }
+    else {
+        showError(
+            `Tidak ada ui yang namanya '${placeUi.ui.value}'`,
+            placeUi.ui.file,
+            placeUi.ui.row,
+            placeUi.ui.col,
+        )
     }
-    
-    return text.join('\n')
-}
-
-function genUiButton(properties: AstProperty[]): string {
-    const v = createVar()
-    
-    const text = [`
-        const ${v} = document.createElement('button');
-        el.appendChild(${v});
-    `]
-    
-    for (const prop of properties) {
-        switch (prop.name.value) {
-            case "text": {
-                const value = genExpr(prop.value)
-                text.push(`${v}.textContent = ${value};`)
-                break
-            }
-            default: {
-                showError(
-                    `Property '${prop.name.value}' gak ada di Tombol`,
-                    prop.name.file,
-                    prop.name.row,
-                    prop.name.col,
-                )
-            }
-        }
-    }
-    
-    return text.join('\n')
 }
 
 function genExpr(expr: AstExpr): string {
@@ -152,6 +74,10 @@ function genExpr(expr: AstExpr): string {
         }
         case AstKind.Bind: {
             todo()
+        }
+        case AstKind.Block: {
+            const stmts = expr.stmts.map(x => genStmt(x)).join('\n')
+            return `() => { ${stmts} }`
         }
     }
 }

@@ -24,7 +24,9 @@ pasang Input {
 
 pasang Tombol {
     text "Hitung"
-    // aksi {
-    //    
-    //}
+    aksi {
+        pasang Label {
+            text "Iyayaya"
+        }
+    }
 }

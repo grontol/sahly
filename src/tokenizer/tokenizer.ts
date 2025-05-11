@@ -121,7 +121,7 @@ function tokenizeKeywordOrIdentifier(inputs: Inputs): Token {
 function tokenizeString(inputs: Inputs): Token {
     const startIndex = inputs.curIndex()
     
-    // Pertama udah pasti petik (""), udah dicek di fungsi tokenize
+    // Pertama udah pasti petik ("), udah dicek di fungsi tokenize
     let text = inputs.next()
     let closed = false
     
