@@ -3,11 +3,14 @@ import { showError } from "@/utils"
 export enum TokenKind {
     KeywordPlaceUi,
     KeywordBind,
+    KeywordLoop,
     
     Identifier,
     OpenCurlyBracket,
     CloseCurlyBracket,
     OpDiv,
+    Dot,
+    Eq,
     
     LitNumber,
     LitString,

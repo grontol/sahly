@@ -1,10 +1,6 @@
 import { bug, showError, todo } from "@/utils";
 import { Token, TokenKind, Tokens } from "./token";
-
-const KEYWORDS: Record<string, TokenKind> = {
-    'pasang':  TokenKind.KeywordPlaceUi,
-    'sebagai': TokenKind.KeywordBind,
-}
+import { KEYWORD_MAP, Keywords } from "@/tokenizer/keyword";
 
 export function tokenize(input: string, filePath: string): Tokens {
     const tokens: Token[] = []
@@ -80,6 +76,30 @@ export function tokenize(input: string, filePath: string): Tokens {
             })
             inputs.next()
         }
+        else if (ch === '.') {
+            tokens.push({
+                kind: TokenKind.Dot,
+                value: '.',
+                file: inputs.file,
+                row: inputs.row,
+                col: inputs.col,
+                start: inputs.curIndex(),
+                end: inputs.curIndex() + 1,
+            })
+            inputs.next()
+        }
+        else if (ch === '=') {
+            tokens.push({
+                kind: TokenKind.Eq,
+                value: '=',
+                file: inputs.file,
+                row: inputs.row,
+                col: inputs.col,
+                start: inputs.curIndex(),
+                end: inputs.curIndex() + 1,
+            })
+            inputs.next()
+        }
         else {
             showError(`Karakter tidak diketahui: ${ch}`, filePath, inputs.row, inputs.col)
         }
@@ -89,7 +109,29 @@ export function tokenize(input: string, filePath: string): Tokens {
 }
 
 function tokenizeNumber(inputs: Inputs): Token {
-    todo()
+    const startIndex = inputs.curIndex()
+    
+    // Pertama udah pasti numeric, soalnya udah dicek di fungsi tokenize
+    let text = inputs.next()
+    
+    while (inputs.hasNext()) {
+        if (isNumeric(inputs.peek())) {
+            text += inputs.next()
+        }
+        else {
+            break
+        }
+    }
+    
+    return {
+        kind: TokenKind.LitNumber,
+        value: text,
+        file: inputs.file,
+        row: inputs.row,
+        col: inputs.col - text.length,
+        start: startIndex,
+        end: inputs.curIndex(),
+    }
 }
 
 function tokenizeKeywordOrIdentifier(inputs: Inputs): Token {
@@ -108,7 +150,7 @@ function tokenizeKeywordOrIdentifier(inputs: Inputs): Token {
     }
     
     return {
-        kind: KEYWORDS[text] ?? TokenKind.Identifier,
+        kind: KEYWORD_MAP[text as Keywords] ?? TokenKind.Identifier,
         value: text,
         file: inputs.file,
         row: inputs.row,

@@ -36,9 +36,13 @@ _$$var5.placeholder = "Hasilnya nanti di sini"
             
 _$$var6.textContent = "Hitung"
 _$$var6.onclick = () => { 
-                const _$$var7 = document.createElement('div');
-                el.appendChild(_$$var7);
+        for (let _$$var7 = 0; _$$var7 < 10; _$$var7++) {
             
-_$$var7.innerHTML = "Iyayaya" }
+                const _$$var8 = document.createElement('div');
+                el.appendChild(_$$var8);
+            
+_$$var8.innerHTML = "Nono"
+        }
+     }
         }
     

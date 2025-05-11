@@ -4,6 +4,7 @@ pasang Label {
 
 pasang Input {
     hint "Masukkan angka pertama"
+    sebagai input1
 }
 
 pasang Label {
@@ -25,8 +26,10 @@ pasang Input {
 pasang Tombol {
     text "Hitung"
     aksi {
-        pasang Label {
-            text "Iyayaya"
+        ulang 10 {
+            pasang Label {
+                text "Nono"
+            }
         }
     }
 }

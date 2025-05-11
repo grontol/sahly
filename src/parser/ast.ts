@@ -4,6 +4,7 @@ export enum AstKind {
     Root,
     PlaceUi,
     Property,
+    Loop,
     Bind,
     Block,
     
@@ -30,9 +31,16 @@ export type AstProperty = {
     isBind: boolean
 }
 
+export type AstLoop = {
+    kind: AstKind.Loop
+    count: AstExpr
+    body: AstBlock
+}
+
 export type AstStmt
 = AstPlaceUi
 | AstProperty
+| AstLoop
 
 export type AstLitNumber = {
     kind: AstKind.LitNumber

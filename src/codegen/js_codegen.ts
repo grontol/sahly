@@ -1,5 +1,6 @@
 import { uiElements } from "@/codegen/ui";
-import { AstExpr, AstKind, AstPlaceUi, AstProperty, AstRoot, AstStmt } from "@/parser/ast";
+import { AstExpr, AstKind, AstLoop, AstPlaceUi, AstProperty, AstRoot, AstStmt } from "@/parser/ast";
+import { Keywords } from "@/tokenizer/keyword";
 import { showError, todo } from "@/utils";
 
 let varId = 0
@@ -23,6 +24,9 @@ function genStmt(stmt: AstStmt): string {
         case AstKind.PlaceUi: {
             return genPlaceUi(stmt)
         }
+        case AstKind.Loop: {
+            return genLoop(stmt)
+        }
         default: {
             todo()
         }
@@ -37,6 +41,12 @@ function genPlaceUi(placeUi: AstPlaceUi): string {
         const texts = [ui.create('el', varName)]
         
         for (const prop of placeUi.properties) {
+            if (prop.name.value === Keywords.Bind) {
+                
+                
+                continue
+            }
+            
             const uiProp = ui.properties.find(x => x.name === prop.name.value)
             
             if (!uiProp) {
@@ -62,6 +72,18 @@ function genPlaceUi(placeUi: AstPlaceUi): string {
             placeUi.ui.col,
         )
     }
+}
+
+function genLoop(loop: AstLoop): string {
+    const varName = createVar()
+    const count = genExpr(loop.count)
+    const stmts = loop.body.stmts.map(x => genStmt(x)).join('\n')
+    
+    return `
+        for (let ${varName} = 0; ${varName} < ${count}; ${varName}++) {
+            ${stmts}
+        }
+    `
 }
 
 function genExpr(expr: AstExpr): string {

@@ -1,4 +1,7 @@
-import { AstBind, AstBlock, AstExpr, AstKind, AstLitNumber, AstLitString, AstPlaceUi, AstProperty, AstRoot, AstStmt } from "@/parser/ast";
+import {
+    AstBind, AstBlock, AstExpr, AstKind, AstLitNumber, AstLitString, AstLoop, AstPlaceUi,
+    AstProperty, AstRoot, AstStmt,
+} from "@/parser/ast";
 import { TokenKind, Tokens } from "@/tokenizer/token";
 import { todo } from "@/utils";
 
@@ -20,7 +23,10 @@ function parseStmt(tokens: Tokens): AstStmt {
         
     switch (kind) {
         case TokenKind.KeywordPlaceUi: {
-            return parsePasang(tokens)
+            return parsePlaceUi(tokens)
+        }
+        case TokenKind.KeywordLoop: {
+            return parseLoop(tokens)
         }
         default: {
             todo(`parseStmt : ${TokenKind[kind]}`)
@@ -28,7 +34,7 @@ function parseStmt(tokens: Tokens): AstStmt {
     }
 }
 
-function parsePasang(tokens: Tokens): AstPlaceUi {
+function parsePlaceUi(tokens: Tokens): AstPlaceUi {
     // Pastikan dimulai dengan keyword `pasang`
     tokens.nextExpect(TokenKind.KeywordPlaceUi)
     const ui = tokens.nextExpect(TokenKind.Identifier)
@@ -49,6 +55,18 @@ function parsePasang(tokens: Tokens): AstPlaceUi {
         ui,
         properties,
         bind: null
+    }
+}
+
+function parseLoop(tokens: Tokens): AstLoop {
+    tokens.nextExpect(TokenKind.KeywordLoop)
+    const count = parseExpr(tokens)
+    const body = parseBlock(tokens)
+    
+    return {
+        kind: AstKind.Loop,
+        count,
+        body,
     }
 }
 
