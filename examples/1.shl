@@ -1,35 +1,28 @@
-pasang Label {
-    text "Angka pertama"
+buat angka isinya 5
+angka isinya 10
+
+buat input1 isinya Input {
+    hint "Masukkan angka 1"
 }
 
-pasang Input {
-    hint "Masukkan angka pertama"
-    sebagai input1
+buat input2 isinya Input {
+    hint "Masukkan angka 2"
 }
 
-pasang Label {
-    text "Angka kedua"
-}
-
-pasang Input {
-    hint "Masukkan angka kedua"
-}
-
-pasang Label {
-    text "Hasil"
-}
-
-pasang Input {
-    hint "Hasilnya nanti di sini"
-}
+pasang input1
+pasang input2
 
 pasang Tombol {
-    text "Hitung"
+    text "Tambahkan"
     aksi {
-        ulang 10 {
-            pasang Label {
-                text "Nono"
-            }
+        
+    }
+}
+ 
+ulang angka indexnya i {
+    ulang 4 indexnya j {
+        pasang Label {
+            text (i + 1) * (j + 1)
         }
     }
 }

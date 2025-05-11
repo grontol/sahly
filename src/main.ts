@@ -1,8 +1,8 @@
 import { jsCodegen } from "@/codegen/js_codegen";
 import { parse } from "@/parser/parser";
 import { tokenize } from "@/tokenizer/tokenizer";
-import fs from "fs";
-import { exit } from "process";
+import * as fs from "node:fs";
+import { exit } from "node:process";
 
 if (process.argv.length < 3) {
     console.log("Butuh input file")

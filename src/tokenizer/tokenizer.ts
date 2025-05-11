@@ -1,10 +1,23 @@
-import { bug, showError, todo } from "@/utils";
+import { bug, showError } from "@/utils";
 import { Token, TokenKind, Tokens } from "./token";
 import { KEYWORD_MAP, Keywords } from "@/tokenizer/keyword";
 
 export function tokenize(input: string, filePath: string): Tokens {
     const tokens: Token[] = []
     const inputs = new Inputs(input, filePath)
+    
+    function addSingleToken(kind: TokenKind, value: string) {
+        tokens.push({
+            kind,
+            value,
+            file: inputs.file,
+            row: inputs.row,
+            col: inputs.col,
+            start: inputs.curIndex(),
+            end: inputs.curIndex() + 1,
+        })
+        inputs.next()
+    }
     
     while (inputs.hasNext()) {
         const ch = inputs.peek()
@@ -25,12 +38,14 @@ export function tokenize(input: string, filePath: string): Tokens {
             // Check kalau single line comment
             if (inputs.peek() === '/') {
                 // Loop terus sampai ketemu new line
-                while (inputs.peek() !== '\n') {
+                while (inputs.hasNext() && inputs.peek() !== '\n') {
                     inputs.next()
                 }
                 
                 // New line-nya belum di-next di dalam loop-nya
-                inputs.next()
+                if (inputs.hasNext()) {
+                    inputs.next()
+                }
             }
             // Kalau gak berarti operator pembagian
             else {
@@ -52,54 +67,16 @@ export function tokenize(input: string, filePath: string): Tokens {
         else if (ch === '"') {
             tokens.push(tokenizeString(inputs))
         }
-        else if (ch === '{') {
-            tokens.push({
-                kind: TokenKind.OpenCurlyBracket,
-                value: '{',
-                file: inputs.file,
-                row: inputs.row,
-                col: inputs.col,
-                start: inputs.curIndex(),
-                end: inputs.curIndex() + 1,
-            })
-            inputs.next()
-        }
-        else if (ch === '}') {
-            tokens.push({
-                kind: TokenKind.CloseCurlyBracket,
-                value: '{',
-                file: inputs.file,
-                row: inputs.row,
-                col: inputs.col,
-                start: inputs.curIndex(),
-                end: inputs.curIndex() + 1,
-            })
-            inputs.next()
-        }
-        else if (ch === '.') {
-            tokens.push({
-                kind: TokenKind.Dot,
-                value: '.',
-                file: inputs.file,
-                row: inputs.row,
-                col: inputs.col,
-                start: inputs.curIndex(),
-                end: inputs.curIndex() + 1,
-            })
-            inputs.next()
-        }
-        else if (ch === '=') {
-            tokens.push({
-                kind: TokenKind.Eq,
-                value: '=',
-                file: inputs.file,
-                row: inputs.row,
-                col: inputs.col,
-                start: inputs.curIndex(),
-                end: inputs.curIndex() + 1,
-            })
-            inputs.next()
-        }
+        else if (ch === '{') { addSingleToken(TokenKind.OpenCurlyBracket, '{') }
+        else if (ch === '}') { addSingleToken(TokenKind.CloseCurlyBracket, '}') }
+        else if (ch === '(') { addSingleToken(TokenKind.OpenBracket, ')') }
+        else if (ch === ')') { addSingleToken(TokenKind.CloseBracket, ')') }
+        else if (ch === '+') { addSingleToken(TokenKind.OpAdd, '+') }
+        else if (ch === '-') { addSingleToken(TokenKind.OpSub, '-') }
+        else if (ch === '*') { addSingleToken(TokenKind.OpMul, '*') }
+        else if (ch === '%') { addSingleToken(TokenKind.OpMod, '%') }
+        else if (ch === '.') { addSingleToken(TokenKind.Dot, '.') }
+        else if (ch === '=') { addSingleToken(TokenKind.Eq, '=') }
         else {
             showError(`Karakter tidak diketahui: ${ch}`, filePath, inputs.row, inputs.col)
         }

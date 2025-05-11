@@ -1,48 +1,36 @@
 
-        export function _$$entry(el) {
-            
-                const _$$var0 = document.createElement('div');
-                el.appendChild(_$$var0);
-            
-_$$var0.innerHTML = "Angka pertama"
+export function _$$entry(el) {
+    let angka = 5;
+    angka = 10
+    let input1 = (function () {
+        const el = document.createElement('input');
+        el.placeholder = "Masukkan angka 1";
+        return el;
+    })();
+    let input2 = (function () {
+        const el = document.createElement('input');
+        el.placeholder = "Masukkan angka 2";
+        return el;
+    })();
+    el.appendChild(input1);
+    el.appendChild(input2);
+    el.appendChild((function () {
+        const el = document.createElement('button');
+        el.textContent = "Tambahkan";
+        el.onclick = () => { };
+        return el;
+    })());
 
-                const _$$var1 = document.createElement('input');
-                el.appendChild(_$$var1);
-            
-_$$var1.placeholder = "Masukkan angka pertama"
+    for (let i = 0; i < angka; i++) {
 
-                const _$$var2 = document.createElement('div');
-                el.appendChild(_$$var2);
-            
-_$$var2.innerHTML = "Angka kedua"
-
-                const _$$var3 = document.createElement('input');
-                el.appendChild(_$$var3);
-            
-_$$var3.placeholder = "Masukkan angka kedua"
-
-                const _$$var4 = document.createElement('div');
-                el.appendChild(_$$var4);
-            
-_$$var4.innerHTML = "Hasil"
-
-                const _$$var5 = document.createElement('input');
-                el.appendChild(_$$var5);
-            
-_$$var5.placeholder = "Hasilnya nanti di sini"
-
-                const _$$var6 = document.createElement('button');
-                el.appendChild(_$$var6);
-            
-_$$var6.textContent = "Hitung"
-_$$var6.onclick = () => { 
-        for (let _$$var7 = 0; _$$var7 < 10; _$$var7++) {
-            
-                const _$$var8 = document.createElement('div');
-                el.appendChild(_$$var8);
-            
-_$$var8.innerHTML = "Nono"
+        for (let j = 0; j < 4; j++) {
+            el.appendChild((function () {
+                const el = document.createElement('div');
+                el.innerHTML = ((i + 1) * (j + 1));
+                return el;
+            })());
         }
-     }
-        }
-    
+
+    }
+
+}

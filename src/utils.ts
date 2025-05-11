@@ -1,4 +1,5 @@
-import { exit } from "process";
+import { Token } from "@/tokenizer/token";
+import { exit } from "node:process";
 
 export function todo(msg = ''): never {
     console.log("TODO...")
@@ -27,5 +28,12 @@ export function showError(msg: string, file: string, row: number, col: number): 
     console.log("Error:")
     console.log(msg)
     console.log(`\nat:\n${file}:${row + 1}:${col + 1}`)
+    
+    console.log()
+    console.trace()
     exit(1)
+}
+
+export function showErrorAtToken(msg: string, token: Token): never {
+    showError(msg, token.file, token.row, token.col)
 }

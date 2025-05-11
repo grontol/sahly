@@ -2,13 +2,21 @@ import { showError } from "@/utils"
 
 export enum TokenKind {
     KeywordPlaceUi,
-    KeywordBind,
+    KeywordDeclare,
+    KeywordAs,
     KeywordLoop,
+    KeywordIndex,
     
     Identifier,
     OpenCurlyBracket,
     CloseCurlyBracket,
+    OpenBracket,
+    CloseBracket,
+    OpAdd,
+    OpSub,
     OpDiv,
+    OpMul,
+    OpMod,
     Dot,
     Eq,
     
@@ -50,9 +58,9 @@ export class Tokens {
         return this.index < this.tokens.length
     }
     
-    peek(): Token {
-        if (this.index >= this.tokens.length) return EOF_TOKEN
-        return this.tokens[this.index]
+    peek(n = 1): Token {
+        if (this.index + n - 1 >= this.tokens.length) return EOF_TOKEN
+        return this.tokens[this.index + n - 1]
     }
     
     next(): Token {

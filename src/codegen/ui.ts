@@ -2,7 +2,7 @@ export interface UiElement {
     name: string
     properties: UiProperty[]
     
-    create(parent: string, varName: string): string
+    create(): string
 }
 
 export interface UiProperty {
@@ -10,18 +10,21 @@ export interface UiProperty {
     jsName: string
 }
 
+const styleProperties: UiProperty[] = [
+    { name: 'background', jsName: 'style.background' },
+    { name: 'padding', jsName: 'style.padding' }
+]
+
 export const uiElements: Record<string, UiElement> = {
     'Input': {
         name: 'Input',
         properties: [
             { name: 'text', jsName: 'value' },
             { name: 'hint', jsName: 'placeholder' },
+            ...styleProperties,
         ],
-        create(parent, varName) {
-            return `
-                const ${varName} = document.createElement('input');
-                ${parent}.appendChild(${varName});
-            `
+        create() {
+            return `document.createElement('input')`
         },
     },
     
@@ -29,12 +32,10 @@ export const uiElements: Record<string, UiElement> = {
         name: 'Label',
         properties: [
             { name: 'text', jsName: 'innerHTML' },
+            ...styleProperties,
         ],
-        create(parent, varName) {
-            return `
-                const ${varName} = document.createElement('div');
-                ${parent}.appendChild(${varName});
-            `
+        create() {
+            return `document.createElement('div')`
         },
     },
     
@@ -44,11 +45,8 @@ export const uiElements: Record<string, UiElement> = {
             { name: 'text', jsName: 'textContent' },
             { name: 'aksi', jsName: 'onclick' },
         ],
-        create(parent, varName) {
-            return `
-                const ${varName} = document.createElement('button');
-                ${parent}.appendChild(${varName});
-            `
+        create() {
+            return `document.createElement('button')`
         },
     },
 }
